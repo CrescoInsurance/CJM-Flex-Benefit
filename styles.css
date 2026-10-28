@@ -53,9 +53,45 @@
   .field-error{background:var(--danger-bg);color:var(--danger);padding:8px 10px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:600;}
 
   /* ---------- Shell / Topbar / Tabs ---------- */
-  .shell{max-width:1080px;margin:0 auto;padding:0 20px 60px;}
+  /* Widened from 1080px so wide tables (Employee Directory's 12 columns,
+     in particular) have a real shot at fitting without horizontal
+     scrolling on a typical laptop/desktop screen. The 720px/480px
+     breakpoints below still shrink everything down for phones, so this
+     only ever adds room on screens that already have it to spare. */
+  .shell{max-width:1320px;margin:0 auto;padding:0 20px 60px;}
   .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 0;flex-wrap:wrap;gap:10px;}
+
+  /* ---------- Money Holding banner ---------- */
+  /* Persistent strip between the topbar and the nav tabs, rendered by
+     renderAdminShell() on every admin tab regardless of which one is
+     active - Money Holding/Utilisation is always a glance away rather
+     than buried on the New Hire Invoicing sub-tab. */
+  /* Small read-only caption above the stat tiles naming the active
+     Benefit Year cycle - the actual Edit control lives on Finance >
+     Annual Invoice, this just keeps it visible everywhere else too. */
+  .money-banner-caption{font-size:11px;color:var(--text-muted);margin-bottom:6px;}
+  .money-banner-caption .link-btn{font-size:11px;}
+  .money-banner{display:flex;flex-wrap:wrap;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden;}
+  .money-banner-item{display:flex;flex-direction:column;gap:3px;padding:10px 20px;border-right:1px solid var(--border);flex:1 1 auto;min-width:110px;}
+  .money-banner-item:last-child{border-right:none;}
+  .money-banner-label{font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted);font-weight:700;}
+  .money-banner-value{font-size:16px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;}
+  @media(max-width:720px){
+    .money-banner-item{flex:1 1 45%;border-right:none;border-bottom:1px solid var(--border);padding:8px 12px;}
+    .money-banner-item:nth-last-child(-n+2){border-bottom:none;}
+  }
+
+  /* Second strip below the money banner - only rendered when there's
+     something to act on, so it disappears entirely on a quiet day rather
+     than showing an empty "all clear" bar. */
+  .action-banner{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--warning-bg);border-left:3px solid var(--warning);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;}
+  .action-banner-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--warning);}
+  .action-chip{background:#fff;border:1px solid var(--warning);color:var(--warning);border-radius:20px;padding:6px 14px;font-size:12.5px;font-weight:700;cursor:pointer;}
+  .action-chip:hover{background:var(--warning-bg);}
   .brand-mini{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;color:var(--primary-dark);}
+  .brand-text{display:flex;flex-direction:column;line-height:1.3;gap:1px;}
+  .brand-title{font-weight:700;font-size:15px;color:var(--primary-dark);white-space:nowrap;}
+  .brand-client{font-weight:600;font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;}
   .topbar-logo{height:68px;width:auto;object-fit:contain;flex-shrink:0;}
   .topbar-right{display:flex;align-items:center;gap:12px;}
   .user-chip{font-size:13px;font-weight:600;color:var(--text);}
@@ -116,6 +152,14 @@
   .search-input:focus{outline:2px solid var(--primary);outline-offset:1px;}
 
   /* ---------- Buttons ---------- */
+  /* Every clickable button/link below gets user-select:none (plus the
+     -webkit- prefixes Safari/trackpads care about). Without this, a firm
+     trackpad press (macOS "Force Click") can select the button's text or
+     trigger the "Look Up" dictionary popup instead of registering as a
+     click -- the click never reaches the app at all. Non-selectable text
+     removes what Look Up/selection needs to latch onto, so a heavy press
+     just falls through to an ordinary click instead. */
+  button,.btn,.link-btn{-webkit-user-select:none;-moz-user-select:none;user-select:none;-webkit-touch-callout:none;}
   .btn{border:none;border-radius:var(--radius-sm);padding:10px 16px;font-size:13.5px;font-weight:700;cursor:pointer;transition:filter .15s ease;}
   .btn:hover{filter:brightness(1.06);}
   .btn:active{filter:brightness(.95);}
@@ -132,12 +176,30 @@
 
   /* ---------- Tables ---------- */
   .table-wrap{overflow-x:auto;}
-  .data-table{width:100%;border-collapse:collapse;font-size:13px;}
-  .data-table th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted);padding:8px 10px;border-bottom:1px solid var(--border);white-space:nowrap;}
-  .data-table td{padding:10px;border-bottom:1px solid var(--border);vertical-align:middle;}
+  /* Tightened padding/font a notch (was 13px / 8-10px) so wider tables -
+     Employee Directory's 12 columns especially - need less horizontal
+     room to lay out without truncating anything, working together with
+     the widened .shell above to avoid horizontal scrolling on most
+     screens. table-wrap above still scrolls it gracefully on anything
+     narrower, phones included. */
+  .data-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .data-table th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted);padding:7px 8px;border-bottom:1px solid var(--border);white-space:nowrap;}
+  .data-table td{padding:7px 8px;border-bottom:1px solid var(--border);vertical-align:middle;}
   .data-table tr:last-child td{border-bottom:none;}
   .actions-cell{white-space:nowrap;}
   .actions-cell .btn{margin-right:6px;}
+
+  /* ---------- Report: per-employee claim detail (expand/hide) ---------- */
+  .claim-detail-row td{background:var(--bg);padding:0 !important;border-bottom:1px solid var(--border);}
+  .claim-detail-wrap{padding:10px 14px 12px 32px;}
+  .claim-detail-table{width:100%;border-collapse:collapse;font-size:12px;}
+  .claim-detail-table th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.3px;color:var(--text-muted);padding:4px 8px;}
+  .claim-detail-table td{padding:4px 8px;}
+  .claim-detail-table tr.total-row td{border-top:1px solid var(--border);font-weight:700;padding-top:6px;}
+  .pdf-detail-check{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text-muted);}
+  .pdf-detail-check input{width:15px;height:15px;}
+  .reimb-done-row td{opacity:.7;}
+  .data-table tfoot td{border-top:2px solid var(--border);border-bottom:none;padding-top:9px;}
 
   /* ---------- Status pills ---------- */
   .status-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:capitalize;}
@@ -193,11 +255,21 @@
     .grid-cards{grid-template-columns:repeat(2,1fr);}
     .bar-row{grid-template-columns:96px 1fr 60px;}
     .shell{padding:0 12px 40px;}
+    .topbar-logo{height:52px;}
+    .brand-title{font-size:14px;}
+    .brand-client{font-size:10px;}
+    /* Keeps the row's action buttons reachable without scrolling all the
+       way across a wide table on a phone - the actions column stays
+       pinned to the right edge while the rest of the row scrolls under it. */
+    .data-table td.actions-cell{position:sticky;right:0;background:#fff;box-shadow:-8px 0 8px -6px rgba(0,0,0,.14);z-index:1;}
   }
   @media(max-width:480px){
     .grid-cards{grid-template-columns:1fr;}
     .brand-footer{bottom:10px;right:10px;padding:5px 9px;font-size:9.5px;gap:6px;}
     .brand-footer img{height:15px;}
+    .topbar-logo{height:42px;}
+    .brand-title{font-size:13px;}
+    .brand-client{font-size:9.5px;}
   }
 
   /* ---------- Auth extras (signup / invite acceptance) ---------- */
@@ -207,3 +279,33 @@
   .banner-danger{background:var(--danger-bg);color:var(--danger);}
   .banner-success{background:var(--success-bg);color:var(--success);}
   .banner-warning{background:var(--warning-bg);color:var(--warning);}
+
+  /* ---------- Polish pass (borrowed from the Cresco build, re-themed) ---------- */
+  /* Custom dropdown arrow so every <select> matches our own palette instead
+     of the browser's native chevron. Colour is baked into the SVG itself
+     (can't reference a CSS variable inside a data-URI), set to match
+     --text-muted above - update both together if that colour ever changes. */
+  select{
+    appearance:none;-webkit-appearance:none;-moz-appearance:none;
+    background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3e%3cpath d='M5 7l5 5 5-5' stroke='%235f7472' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
+    background-repeat:no-repeat;background-position:right 10px center;background-size:14px;
+    padding-right:32px;
+  }
+  select:disabled{opacity:.6;cursor:not-allowed;background-color:var(--bg);}
+  select:focus{outline:2px solid var(--primary);outline-offset:1px;}
+
+  /* Checkbox/radio ticks pick up our theme colour instead of the OS default (usually blue). */
+  input[type=checkbox], input[type=radio]{accent-color:var(--primary);}
+
+  /* Date pickers weren't explicitly styled anywhere before (e.g. the New
+     Hire Invoicing From/To range) and fell back to the bare browser look. */
+  input[type=date]{padding:9px 10px;border-radius:var(--radius-sm);border:1px solid var(--border);font-family:inherit;color:var(--text);}
+
+  /* A .field-hint left with no text (nothing to show) no longer renders as
+     an empty coloured box. */
+  .field-hint:empty{display:none;}
+  .status-reimbursed{background:#dff0f7;color:#12607f;}
+  .status-reimbursed-date{color:#12607f;}
+  .admin-settings-panel{padding:12px 14px;background:var(--bg);border-radius:8px;}
+  .admin-module-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px 18px;margin:8px 0 12px;}
+  .admin-check{display:flex;gap:6px;align-items:center;font-size:12.5px;cursor:pointer;margin-bottom:4px;}
